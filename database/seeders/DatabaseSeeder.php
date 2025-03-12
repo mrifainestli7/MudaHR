@@ -13,11 +13,47 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        $usersData = [
+            [
+                'name' => 'adminsistem',
+                'email' => 'adminsistem@mail.com',
+                'password' => bcrypt('password')
+            ],
+            [
+                'name' => 'adminsekolah',
+                'email' => 'adminsekolah@mail.com',
+                'password' => bcrypt('password')
+            ],
+            [
+                'name' => 'kepalasekolah',
+                'email' => 'kepalasekolah@mail.com',
+                'password' => bcrypt('password')
+            ],
+            [
+                'name' => 'staffguru',
+                'email' => 'staffguru@mail.com',
+                'password' => bcrypt('password')
+            ],
+            [
+                'name' => 'staffdikdasmen',
+                'email' => 'staffdikdasmen@mail.com',
+                'password' => bcrypt('password')
+            ],
+            [
+                'name' => 'pimpinandikdasmen',
+                'email' => 'pimpinandikdasmen@mail.com',
+                'password' => bcrypt('password')
+            ],
+        ];
+        $roles = ['admin_sistem', 'admin_sekolah', 'kepala_sekolah', 'staff_guru', 'staff_dikdasmen', 'pimpinanan_dikdasmen'];
+        $this->call([RoleSeeder::class]);
+        foreach ($usersData as $index => $user) {
+            $createdUser = User::factory()->create([
+                'name' => $user['name'],
+                'email' => $user['email'],
+                'password' => bcrypt('password'),
+            ]);
+            $createdUser->assignRole($roles[$index]);
+        }
     }
 }

@@ -13,12 +13,21 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Gate;
 
 class KegiatanResource extends Resource
 {
     protected static ?string $model = Kegiatan::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rocket-launch';
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        if (Gate::allows('view', Kegiatan::class)) {
+            return true;
+        }
+        return false;
+    }
 
     public static function form(Form $form): Form
     {
@@ -33,7 +42,15 @@ class KegiatanResource extends Resource
                 Forms\Components\DatePicker::make('tanggal_rencana')->label('Tanggal rencana kegiatan')
                     ->required()
                     ->minDate(now())
+                    ->validationMessages([
+                        'after_or_equal' => 'Tanggal rencana kegiatan tidak boleh kurang dari hari ini',
+                    ]),
             ]);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->where('user', Filament::auth()->user()->getAuthIdentifier());
     }
 
     public static function table(Table $table): Table
